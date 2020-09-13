@@ -63,7 +63,7 @@ module.exports = {
       }
     ],
     sidebar: {
-      '/guide/': [
+      '/': [
         {
           title: '语音合成',
           sidebarDepth: 2,
