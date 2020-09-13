@@ -36,6 +36,8 @@ module.exports = {
     // 导航栏配置
     // navbar: false, // 禁用导航栏
     nav: [
+      { text: "node", link: "/node/" },
+      { text: "guide", link: "/guide/"},
       {
         text: '前端算法',
         link: '/algorithm/',
@@ -60,35 +62,116 @@ module.exports = {
         ]
       }
     ],
-    sidebar: [
-      {
-        title: '语音合成',
-        path: '/baidu-speech/' // 可选的, 应该是一个绝对路径
-      },
-      {
-        title: '最新组件',
-        children: [
-          '/el-drawer/',
-          '/new-components/'
-        ]
-      },
-      {
-        title: '组件',
-        path: '/components/' // 可选的, 应该是一个绝对路径
-      },
-      {
-        title: '超简易vue.js',
-        path: '/vue/'
-      },
-      {
-        title: '存款模块',
-        path: '/cashIn/'
-      },
-      {
-        title: '取款模块',
-        path: '/cashDispenser/'
-      }
-    ],
+    sidebar: {
+      '/guide/': [
+        {
+          title: '语音合成',
+          sidebarDepth: 2,
+          path: '/baidu-speech/' // 可选的, 应该是一个绝对路径
+        },
+        {
+          title: '自助工具',
+          sidebarDepth: 1,
+          path: '/ss-utils/' // 可选的, 应该是一个绝对路径
+        },
+        {
+          title: '外设调用',
+          // children: [
+          //   '/device/cashIn.md'
+          // ]
+          children: [
+            {title: '现金存入', path: '/device/CashIn.md'},
+            {title: '现金支取', path: '/device/CashDispenser.md'},
+            {title: '凭条打印机', path: '/device/ReceiptPrinter.md'},
+            {title: '存单读取', path: '/device/DepositReader.md'},
+            {title: '存单打印', path: '/device/DepositPrinter.md'},
+            {title: '磁条刷卡器', path: '/device/SPCardReader.md'},
+            {title: '存折打印', path: '/device/PassbookPrinter.md'},
+            {title: '摄像头', path: '/device/Camera.md'},
+            {title: '发卡器', path: '/device/CardDispenser.md'},
+            {title: '文档打印机', path: '/device/DocumentPrinter.md'},
+            {title: '传感器与指示器', path: '/device/SIU.md'},
+          ]
+        },
+        {
+          title: '最新组件',
+          children: [
+            '/el-drawer/',
+            '/new-components/'
+          ]
+        },
+        {
+          title: '加密解密',
+          path: '/crypto-js/' // 可选的, 应该是一个绝对路径
+        },
+        {
+          title: '组件',
+          path: '/components/' // 可选的, 应该是一个绝对路径
+        },
+        {
+          title: '超简易vue.js',
+          path: '/vue/'
+        }
+      ],
+      '/node/': [
+        {
+          title: '中文',
+          path: 'zh' // 可选的, 应该是一个绝对路径
+        },
+        {
+          titile: '语音合成',
+          path: 'baidu-speech/'
+        }
+      ]
+    },
+    // sidebar: [
+    //   {
+    //     title: '语音合成',
+    //     path: '/baidu-speech/' // 可选的, 应该是一个绝对路径
+    //   },
+    //   {
+    //     title: '自助工具',
+    //     path: '/ss-utils/' // 可选的, 应该是一个绝对路径
+    //   },
+    //   {
+    //     title: '外设调用',
+    //     // children: [
+    //     //   '/device/cashIn.md'
+    //     // ]
+    //     children: [
+    //       {title: '现金存入', path: '/device/CashIn.md'},
+    //       {title: '现金支取', path: '/device/CashDispenser.md'},
+    //       {title: '凭条打印机', path: '/device/ReceiptPrinter.md'},
+    //       {title: '存单读取', path: '/device/DepositReader.md'},
+    //       {title: '存单打印', path: '/device/DepositPrinter.md'},
+    //       {title: '磁条刷卡器', path: '/device/SPCardReader.md'},
+    //       {title: '存折打印', path: '/device/PassbookPrinter.md'},
+    //       {title: '摄像头', path: '/device/Camera.md'},
+    //       {title: '发卡器', path: '/device/CardDispenser.md'},
+    //       {title: '文档打印机', path: '/device/DocumentPrinter.md'},
+    //       {title: '传感器与指示器', path: '/device/SIU.md'},
+    //     ]
+    //   },
+    //   {
+    //     title: '最新组件',
+    //     children: [
+    //       '/el-drawer/',
+    //       '/new-components/'
+    //     ]
+    //   },
+    //   {
+    //     title: '加密解密',
+    //     path: '/crypto-js/' // 可选的, 应该是一个绝对路径
+    //   },
+    //   {
+    //     title: '组件',
+    //     path: '/components/' // 可选的, 应该是一个绝对路径
+    //   },
+    //   {
+    //     title: '超简易vue.js',
+    //     path: '/vue/'
+    //   }
+    // ],
     sidebarDepth: 2
   }
 };

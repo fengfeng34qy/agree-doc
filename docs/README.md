@@ -1,215 +1,239 @@
----
-{
-  title: 简易vue.js,
-  lang: zh-CN
+# 自助小帮手
+
+
+## 方法
+``` js
+// 设置倒计时时间
+this.setTimeout(60);
+
+// 暂停倒计时
+this.$globalTimer.pause();
+
+// 恢复倒计时
+this.$globalTimer.resume();
+
+// 手动关闭软键盘
+import { ScreenKeyboardManagerJS } from "awp-plugin-screen-keyboard-js";
+ScreenKeyboardManagerJS.closeScreenKeyboardAsync(); // 关闭小键盘
+
+// 出参
+this.outArgs.data
+
+// 入参
+this.inArgs.data
+
+// 防抖动
+Utils.debounce(function() {}, 3000, true)
+```
+
+## 软键盘
+```bash
+// v-keyboard="'number'"
+none = 0 // 无屏幕键盘，默认项
+number = 1 // 数字键盘
+text = 2 // 文本键盘，与Normal键盘一致
+normal = 2// 普通屏幕键盘
+chineseId = 3 // 证件号码选择键盘，除数字键之外添加X键
+address = 4 //地址键盘，提供省，市，区等常用字
+phoneNumber = 5 // 电话号码选择键盘，除数字键之外添加-键
+numberWithoutPoint = 6 //不带小数点的数字键盘
+:decimal="2"  几位小数点
+
+```
+
+## 赞同钩子函数
+```javascript
+// vue实例创建完成后执行
+async onInitialize() {}
+
+// 动画完成后执行，在onInitialize之后
+async onNavigated() {}
+
+// 页面关闭时执行
+async onClose() {}
+
+// 页面超时时执行
+async onTimeout() {}
+```
+## vue内置
+```javascript
+// 计算属性
+computed: {
+  isDisabled() {
+    return !(this.value > 0)
+  }
 }
 
----
+// 组件
+components: { auiBtn }
 
-### 简易vue.js
-160行代码实现vue.js功能
+// 过滤器
+filters: {
+  toDouble(num) {
+    return num < 10 ? '0' + num : num;
+  }
+}
+
+// vue实例创建完成触发
+created() {}
+```
+
+## 弹窗
+```javascript
+// 点击遮罩外半透明区域关闭弹窗 提示: 4.0版本可用;
+Dialog.showNonAwait(WaitInfo, {
+  closeContentModalRestPart: true,  // 加该属性实现
+  dialogBoxContentArgs: {
+    content: "加载中..."
+});
+```
+## 输入框
+```bash
+:maxlength="6"
+```
+
+## 常用模块
+``` js
+import MessageDialogHelper from "../../utils/message-dialog-helper";
+import RequestHelper from "../../utils/request-helper"  ;
+import { Dialog, Utils} from "aui-ss";
+import { Ameba } from "awp-lib-ameba-js";
+import { TradeLogger } from "awp-plugin-logger";
+import AmountConver from "../../utils/amount-conver";   // 金额格式化
+import { Moment } from 'awp-lib-moment';    // 获取日期
+
+```
+
+## css样式
+``` css
+justify-content: flex-start;
+justify-content: space-between;
+justify-content: center;
+justify-content: flex-end;
+```
+
+## 布局
+``` js
+direction="column"
+direction="row"
+align="justify" | "right" | "left"  // 文本对齐: 两端对齐|右对齐|左对齐
+```
+
+## 组件
 ```js
-/**
- * sff-vue.js
- * 接受一个对象，对属性进行依赖追踪
- */
-function observable(obj) {
-  const dep = new Dep()
-  
-  const proxy = new Proxy(obj, {
-    get(target, property) {
-      const value = target[property]
-      if (value && typeof value === 'object') { // 若属性为object，递归处理
-        target[property] = observable(value)
-      }
-      if (Dep.target) { // Dep.target指向当前watcher
-        dep.addWatcher(Dep.target)
-      }
-      return target[property]
-    },
-    set(target, property, value) {
-      target[property] = value
-      dep.notify() // 通知订阅器
+
+Vue.component('table-select', {
+  template: `<aui-checkbox label="" v-model="value" @change="changeSelect"></aui-checkbox>`,
+  props: {
+    selected: {
+      type: Boolean
     }
-  })
-  return proxy
-}
-
-/**
- * 依赖收集器，存放所有的watcher，并提供发布功能(notify)
- */
-class Dep {
-  constructor() {
-    this.watchers = []
-  }
-  addWatcher(watcher) { // 添加watcher
-    this.watchers.push(watcher)
-  }
-  notify() { // 通知方法，调用即依次遍历所有watcher执行更新
-    this.watchers.forEach((watcher) => {
-      watcher.update()
-    })
-  }
-}
-
-class Watcher {
-  constructor(proxy, property, cb) {
-    this.proxy = proxy
-    this.property = property
-    this.cb = cb
-    this.value = this.get()
-  }
-  update() { // 执行更新
-    const newValue = this.proxy[this.property]
-    if (newValue !== this.value && this.cb) { // 对比property新旧值，决定是否更新
-      this.cb(newValue)
+  },
+  data() {
+    return {
+      value: this.selected
+    }
+  },
+  methods: {
+    changeSelect() {
+      let params = {selected: this.value};
+      this.$emit('on-custom-comp', params);
     }
   }
-  get() { // 只在初始化时调用，用于依赖收集
-    Dep.target = this // 将自身指向Dep.target，执行完依赖收集再去释放
-    const value = this.proxy[this.property]
-    Dep.target = null
-    return value
-  }
-}
+});
 
-
-
-let init = false // 只在初始化时去生成watcher
-const eventMap = new Map() // 存放事件
-let root = null // 根节点
-
-/**
- * 用于将传入RayActive的vm对象进行代理，可通过this.xx访问this.data.xx
- * @param {Object} vm 
- * @param {Proxy} proxydata 经过proxy代理的vm.data对象，使this.xx操作也能触发视图更新
- */
-function vmProxy(vm, proxydata) {
-  return new Proxy(vm, {
-    get(target, property) {
-      return target.data[property] || target.methods[property]
-    },
-    set(target, property, value) {
-      proxydata[property] = value
-    }
-  })
-}
-
-/**
- * 编译vm，分别对data和render做相应处理
- * @param {Object} vm 需要被编译的vm对象
- */
-function compile(vm) {
-  root = document.getElementById(vm.el.replace('#', ''));
-  const proxydata = compileData(vm.data)
-  // compileRender(proxydata, vm.render)
-  compileRender(proxydata, root.innerHTML)
-  bindEvents(vm, vmProxy(vm, proxydata))
-}
-
-/**
- * 
- * @param {Object} data 需要被编译的vm中的data对象
- */
-function compileData(data) {
-  return observable(data)
-}
-
-/**
- * 
- * @param {*} render 需要被编译的render字符串
- * @param {*} proxydata 经proxy转换过的data
- */
-function compileRender(proxydata, render) {
-  if (render) {
-    const variableRegexp = /\{\{(.*?)\}\}/g
-    const variableResult = render.replace(variableRegexp, (a, b) => { // 替换变量为相应的data值
-      b = b.replace(/\s/g, '')
-      if (!init) { // 只在初始化时去生成watcher
-        new Watcher(proxydata, b, function() {
-          compileRender(proxydata, render)
-        })
-      }
-      return proxydata[b]
-    })
-    const eventRegexp = /(?<=<.*)@(.*)="(.*?)"(?=.*>)/
-    const result = variableResult.replace(eventRegexp, (a, event, fn) => { // 为绑定事件的标签添加唯一id标识
-      const id = Math.random().toString(36).slice(2)
-      eventMap.set(id, {
-        type: event,
-        method: fn
-      })
-      return a + ` id=${id}`
-    })
-    init = true
-    root.innerHTML = result
-  }
-}
-
-/**
- * 通过root节点做事件代理，绑定模板中声明的事件
- * @param {*} vm 
- * @param {*} proxyvm 经过proxy代理的vm
- */
-function bindEvents(vm, proxyvm) {
-  for (let [key, value] of eventMap) {
-    root.addEventListener(value.type, (e) => {
-      const method = vm.methods[value.method]
-      if (method && e.target.id === key) {
-        method.apply(proxyvm) // 将vm中methods方法的this指向经过proxy的vm对象
-      }
-    })
-  }
-}
-
-/**
- * 可理解为Vue中的Vue类，使用方式为new Vue(vm)
- */
-class Vue {
-  constructor(vm) {
-    compile(vm)
-  }
-}
 ```
-#### html使用：
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
-  
-</head>
-<body>
-  <div id="root">
-    <span>{{ age }}</span>
-    <button @click="clickFn1">修改年龄</button>
-  </div>
-<script src="./sff-vue.js"></script>
+## 表格-单选
+[![index_01](https://www.sunfengfeng.com/markdownfiles/images/gif/index_01.gif)](images/index_01.jpg)
+代码
+```vue
+<!-- test.vue -->
+<template>
+  <aui-row class="replenish-table-row" v-for="(item, index) in tableData" :key="index">
+    <aui-col span="1">
+      <table-check :field="item.selected" :index="index" @on-custom-comp="customCompFunc"></table-check>
+    </aui-col>
+    <aui-col span="4">{{ item.denomination }}</aui-col>
+    <aui-col span="4">{{ item.amount }}</aui-col>
+  </aui-row>
+</template>
 <script>
-  new Vue({
-    el: '#root',
-    data: {
-      age: 18
-    },
-    methods: {
-      clickFn1() {
-        this.age = 28;
-      },
-      clickFn2() {
-        this.age = 18;
+import TableCheck from "./TabelCheck";
+export default {
+  name: 'test',
+  data() {
+    return {
+      selectItem: null, // 选中的内容
+      tableData: [
+        {selected: true, denomination: '200.00', amount: '4,300.00'},
+        {selected: false, denomination: '200.00', amount: '4,300.00'},
+        {selected: false, denomination: '200.00', amount: '4,300.00'},
+      ],
+    }
+  },
+  methods: {
+    async customCompFunc(obj) {
+      for (let i = 0; i < this.tableData.length; i++) {
+        if (obj.index !== i) {
+          this.tableData[i].selected = false;
+        } else {
+          this.tableData[obj.index].selected = obj.selected;
+          if (obj.selected === true) {
+            // 选中内容赋值
+            this.selectItem = this.tableData[obj.index];
+          }
+        }
       }
-    },
-    render: '年龄：<span>{{ age }}</span></br><button @click="clickFn1">修改年龄</button>'
-  })
+    }
+  }
+}
 </script>
-</body>
-</html>
 ```
-#### 下载源码(sff-vue.js、index.html)：
-[https://github.com/answershuto/learnVue](https://github.com/answershuto/learnVue)
+```vue
+<!-- TabelCheck.vue -->
+<template>
+  <div style="width:100%;">
+    <aui-checkbox v-model="value" @change="changefn"></aui-checkbox>
+  </div>
+</template>
+<script>
+export default {
+  name: "table-check",
+  data() {
+    return {
+      value: this.field
+    };
+  },
+  props: {
+    rowData: {
+      type: Object
+    },
+    field: {
+      type: Boolean
+    },
+    index: {
+      type: Number
+    }
+  },
+  mounted() {
+    // this.value = this.rowData[this.field];
+  },
+  watch: {
+    field: function(newValue, oldValue) {
+      this.value = newValue;
+    }
+  },
+  methods: {
+    changefn() {
+      let obj = {
+        selected: this.value,
+        index: this.index
+      }
+      this.$emit("on-custom-comp", obj);
+    }
+  }
+</script>
+```
 
-#### 文章来源：
-[一个极其简易版的vue.js实现](https://www.cnblogs.com/danceonbeat/p/10656837.html)
+*********************
+

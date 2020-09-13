@@ -4,7 +4,7 @@ lang: zh-CN
 ---
 
 ### 简易vue.js
-160行代码实现vue.js功能
+160行代码实现vue.js双向绑定
 ```js
 /**
  * sff-vue.js
