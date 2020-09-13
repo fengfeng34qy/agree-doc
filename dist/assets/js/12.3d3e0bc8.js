@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[12],{331:function(n,t,e){"use strict";e.r(t);var s={name:"pager",data:function(){return{name:"sff"}}},a=e(16),i=Object(a.a)(s,(function(){var n=this.$createElement;return(this._self._c||n)("div",{staticClass:"pager"},[this._v("     \n  "+this._s(this.name)+"\n")])}),[],!1,null,null,null);t.default=i.exports}}]);
