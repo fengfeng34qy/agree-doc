@@ -53,11 +53,7 @@ module.exports = {
         ariaLabel: 'Language Menu',
         items: [{
             text: 'GitHub地址',
-            link: 'https://github.com/OBKoro1'
-          },
-          {
-            text: '算法仓库',
-            link: 'https://github.com/OBKoro1/Brush_algorithm'
+            link: 'https://github.com/fengfeng34qy/agree-doc'
           }
         ]
       }
