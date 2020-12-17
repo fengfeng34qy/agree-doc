@@ -169,5 +169,19 @@ module.exports = {
     //   }
     // ],
     sidebarDepth: 2
-  }
+  },
+  plugins: [
+    [
+      require('../../src/demo'),
+      {
+        component: 'DemoBlock',
+        "demo-block": {
+          "hide-text": "隐藏",
+          "show-text": "显示",
+          "copy-text": "复制",
+          "copy-success": "成功"
+        }
+      }
+    ]
+  ]
 };

@@ -1,3 +1,25 @@
+<el-button>按钮</el-button>
+
+:::demo
+```html
+<el-button>按钮</el-button>
+```
+:::
+
+## 自助
+
+::: demo
+<div @click="onClick">Click me!</div>
+
+<script>
+export default {
+    methods: {
+        onClick: () => { window.alert(1) },
+    },
+}
+</script>
+:::
+
 # 自助小帮手
 
 

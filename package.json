@@ -9,11 +9,16 @@
   },
   "devDependencies": {
     "element-ui": "^2.12.0",
-    "vue": "^2.6.10"
+    "vue": "^2.6.10",
+    "vuepress-plugin-container": "^2.1.5",
+    "vuepress-plugin-demo-container": "^0.2.0"
   },
   "dependencies": {
+    "@vue/component-compiler-utils": "^3.2.0",
     "axios": "^0.19.2",
     "fs": "0.0.1-security",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "markdown-it-container": "^3.0.0",
+    "vue-template-compiler": "^2.6.12"
   }
 }
